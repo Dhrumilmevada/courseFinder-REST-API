@@ -47,7 +47,8 @@ public class UdemyCourseService {
     }
   }
 
-  private MongoClient dbClient = new MongoClient();
+  private MongoClient dbClient =
+      new MongoClient(System.getenv("MONGO_HOST"), Integer.parseInt(System.getenv("MONGO_PORT")));
   private MongoDatabase udemyDB = dbClient.getDatabase(DATABASE_NAME);
   private MongoCollection<Document> collection = udemyDB.getCollection(COURSE_COLLECTION);
 
