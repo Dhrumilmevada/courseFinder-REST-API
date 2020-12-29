@@ -16,11 +16,15 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Indexes;
 
 public class UdemyCourseService {
 
   public static final String COURSE_COLLECTION = "courses";
   public static final String DATABASE_NAME = "udemy";
+  private MongoClient dbClient = null;
+  private MongoDatabase udemyDB = null;
+  private MongoCollection<Document> collection = null;
 
   private static enum CourseLength {
     EXTRA_SHORT(1), SHORT(2), MEDIUM(3), LONG(4), EXTRA_LONG(5);
@@ -47,10 +51,14 @@ public class UdemyCourseService {
     }
   }
 
-  private MongoClient dbClient =
-      new MongoClient(System.getenv("MONGO_HOST"), Integer.parseInt(System.getenv("MONGO_PORT")));
-  private MongoDatabase udemyDB = dbClient.getDatabase(DATABASE_NAME);
-  private MongoCollection<Document> collection = udemyDB.getCollection(COURSE_COLLECTION);
+  public UdemyCourseService() {
+    dbClient =
+        new MongoClient(System.getenv("MONGO_HOST"), Integer.parseInt(System.getenv("MONGO_PORT")));
+    udemyDB = dbClient.getDatabase(DATABASE_NAME);
+    collection = udemyDB.getCollection(COURSE_COLLECTION);
+    collection.createIndex(Indexes.text("metadata"));
+
+  }
 
 
   public List<Course> getCourseForTopic(String topic) {
